@@ -6,7 +6,7 @@ pipeline {
 
     parameters {
         booleanParam(name: 'DRY_RUN',
-               defaultValue: 'false',
+               defaultValue: false,
                description: 'Запуск dry-run без деплоя в k8s')
     }
 
@@ -45,15 +45,18 @@ pipeline {
             steps {
                 script {
                 echo "Dry_run: ${params.$DRY_RUN}"
-                if (params.DRY_RUN) {
-                 echo 'Start dry-run without deploy in k8s'
-                 //helm upgrade --install app ./java-app-chart -f java-api-values.yaml -n javanamespace --create-namespace --dry-run
-                } else {
-                 echo 'Start deploy to k8s'
+                    if (params.DRY_RUN)
+                        {
+                            echo 'Start dry-run without deploy in k8s'
+                            sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml --dry-run"
+//                 sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml -n javanamespace --create-namespace --dry-run"
+                    } else
+                        {
+                            echo 'Start deploy to k8s'
+                            sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml --dry-run"
+                        }
                 }
             }
-
-           }
         }
 
 //         stage('Build docker image') {
