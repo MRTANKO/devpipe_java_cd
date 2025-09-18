@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'MVNJenkins'
+    }
+
+    parameters {
+        string(name: 'VERSION',
+               defaultValue: '0.1',
+               description: 'Версия для ')
+    }
+
+    environment {
+        CURRENT_DIR = pwd()
+    }
+
+    stages {
+        stage('Delete workspace before build start') {
+            steps {
+                echo 'Deleting workspace'
+                sh 'pwd'
+                deleteDir()
+            }
+        }
+        stage('Checkout'){
+            steps {
+                git branch: 'test_without_db',
+                    url: 'https://github.com/MRTANKO/devapp_java'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                script {
+                    echo 'Cleaning workspace...'
+                    dir('demo'){
+                        sh 'mvn clean'
+                    }
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    echo 'Packaging application...'
+                    dir('demo'){
+                        sh 'mvn package -DskipTests'
+                    }
+                }
+            }
+            post {
+                success {
+                    sh 'cp ${CURRENT_DIR}/demo/target/*.jar ${CURRENT_DIR}/demo/docker/'
+
+                }
+            }
+        }
+
+        stage('Build docker image') {
+            steps {
+                dir('demo/docker'){
+                    sh "docker build -t mrtanko/jenkins-java-api:${params.VERSION} ."
+                }
+
+            }
+        }
+        stage('Push docker image to DockerHub'){
+            steps {
+                withDockerRegistry(credentialsId: 'dockerhub-cred-mrtanko', url: 'https://index.docker.io/v1/') {
+//                docker.image('mrtanko/jenkins-java-api').push('v1.0.0')
+                sh "docker push mrtanko/jenkins-java-api:${params.VERSION}"
+                }
+            }
+        }
+        stage ('Delete local docker image')
+        {
+            steps {
+                sh "docker rmi mrtanko/jenkins-java-api:${params.VERSION}"
+            }
+        }
+        stage('Test pwd'){
+            steps {
+                sh 'ls -la'
+                sh 'pwd'
+            }
+        }
+    }
+}
