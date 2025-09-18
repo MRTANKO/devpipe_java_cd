@@ -25,13 +25,19 @@ pipeline {
 
         stage('Checkout helm') {
             steps {
-                git branch: 'main', url: 'https://github.com/MRTANKO/apphelm'
+                dir('helm')
+                    {
+                        git branch: 'main', url: 'https://github.com/MRTANKO/apphelm'
+                    }
                 }
         }
 
         stage('Checkout values'){
-                steps {
-                    git branch: 'main', url: 'https://github.com/MRTANKO/appvalues'
+            steps {
+                dir('values')
+                    {
+                        git branch: 'main', url: 'https://github.com/MRTANKO/appvalues'
+                    }
                 }
         }
 
