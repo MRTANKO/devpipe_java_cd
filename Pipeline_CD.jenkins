@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-helm upgrade --install app ./java-app-chart -f java-api-values.yaml -n javanamespace --create-namespace --dry-run
+
 
 
     parameters {
@@ -23,11 +23,11 @@ helm upgrade --install app ./java-app-chart -f java-api-values.yaml -n javanames
             }
         }
 
-//        stage('Checkout helm') {
-//            steps {
-//                git branch: 'main', url: 'https://github.com/MRTANKO/apphelm'
-//                }
-//        }
+        stage('Checkout helm') {
+            steps {
+                git branch: 'main', url: 'https://github.com/MRTANKO/apphelm'
+                }
+        }
 
         stage('Checkout values'){
                 steps {
@@ -41,6 +41,7 @@ helm upgrade --install app ./java-app-chart -f java-api-values.yaml -n javanames
                 echo "Dry_run: ${params.$DRY_RUN}"
                 if (params.DRY_RUN) {
                  echo 'Start dry-run without deploy in k8s'
+                 //helm upgrade --install app ./java-app-chart -f java-api-values.yaml -n javanamespace --create-namespace --dry-run
                 } else {
                  echo 'Start deploy to k8s'
                 }
