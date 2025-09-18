@@ -44,7 +44,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                echo "Dry_run: ${params.$DRY_RUN}"
+                echo "Dry_run: ${params.DRY_RUN}"
                     if (params.DRY_RUN)
                         {
                             echo 'Start dry-run without deploy in k8s'
