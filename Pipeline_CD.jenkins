@@ -53,7 +53,7 @@ pipeline {
                     } else
                         {
                             echo 'Start deploy to k8s'
-                            sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml --dry-run"
+                            sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml"
                         }
                 }
             }
