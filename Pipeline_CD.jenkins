@@ -48,7 +48,7 @@ pipeline {
                     if (params.DRY_RUN)
                         {
                             echo 'Start dry-run without deploy in k8s'
-                            sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml --dry-run"
+                            sh "helm upgrade --install app-wdb ./helm/java-app-chart -f ./values/java-api-values.yaml --dry-run"
 //                 sh "helm upgrade --install app ./helm/java-app-chart -f ./values/java-api-values.yaml -n javanamespace --create-namespace --dry-run"
                     } else
                         {
